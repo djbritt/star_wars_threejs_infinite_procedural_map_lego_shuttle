@@ -13,7 +13,6 @@ camera.position.y = 0.3;
 camera.position.z = 2;
 
 
-// TESTING GEMINI NEW SHIPS V1!!!!!!
 const visibleRadius = 100; // Adjust this based on your requirements
 
 let timeSinceLastSpawn = 0;
@@ -25,45 +24,46 @@ const fixedTimeStep = 1 / 60; // 60 FPS
 let accumulator = 0;
 
 const maxShipsInScene = 3;
-// END ---------------- gemini v1
 
-
-
-// scene.fog = new THREE.Fog(0x000000, 800, 1200);
+scene.fog = new THREE.Fog(0x000000, 800, 1200);
 
 var renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 
-// var controls = new THREE.OrbitControls( camera, renderer.domElement );
-// controls.enableDamping = true;
-// controls.dampingFactor = 0.25;
-// controls.enableZoom = true;
-// controls.enableKeys = false;
-
 
 const lDrawLoader = new LDrawLoader();
-const ldrawPath = './';
-const shuttleModelFileName = './Procedural%20City_files/4494-1-Imperial Shuttle-Mini.mpd_Packed.mpd';
 
-lDrawLoader.setPath(ldrawPath);
-var lDrawGroup;
-lDrawLoader.load(shuttleModelFileName, function(group) {
-		scene.add(group);
-		group.scale.set(0.1, 0.1, 0.1);
+const ldrawPath = './Procedural%20City_files/models/';
+const shuttleModelFileNames = [
+  '4494-1-Imperial Shuttle-Minimpd_Packed.mpd',
+  '6965-1-TIEIntercep_4h4MXk5mpd_Packed.mpd',
+  '6966-1-JediStarfighter-Minimpd_Packed.mpd',
+	'30051-1-X-wingFighter-Minimpd_Packed.mpd'
+];
 
-		// model.rotation.y = Math.PI;
-		group.rotation.x = Math.PI;
-		group.rotation.y = Math.PI;
+let lDrawGroup = [];
 
-		handleLoadedModel(group)
+shuttleModelFileNames.forEach((fileName, index) => {
+	const shuttleModelFileName = `${ldrawPath}${fileName}`;
+  console.log("shuttleModelFileName IS");
+  console.log(shuttleModelFileName);
+	lDrawLoader.setResourcePath(ldrawPath);
+  lDrawLoader.load(shuttleModelFileName, (group) => {
+    scene.add(group);
+    group.scale.set(0.1, 0.1, 0.1);
+    group.rotation.x = Math.PI;
+    group.rotation.y = Math.PI;
+    lDrawGroup[index] = group;
 
+    if (lDrawGroup.length === shuttleModelFileNames.length) {
+      handleLoadedModels(lDrawGroup[0], lDrawGroup[1], lDrawGroup[2], lDrawGroup[3]);
+    }
+  });
 });
 
-
-
-function handleLoadedModel(obj) {
+function handleLoadedModels(obj, obj1, obj2, obj3) {
 
 		lDrawGroup = obj;
 		console.log("RECEIVED OBJ")
@@ -321,22 +321,6 @@ function handleLoadedModel(obj) {
 		  stats.end();
 		}
 		render();
-// END ORIGINAL WORKING!!!!!
-
-// Initialize the game loop
-
-
-// function gameLoop(currentTime) {
-//   const elapsedTime = currentTime - lastTime;
-//   if (elapsedTime >= targetDelay) {
-//     lastTime = currentTime;
-//     update(elapsedTime);
-//     render();
-// 		renderer.render(scene, camera);
-//   }
-//   requestAnimationFrame(gameLoop);
-// }
-
 
 
 var num = 1;
@@ -385,105 +369,21 @@ function update() {
 }
 
 
-
-
-		//need to fix the pausing command
-		//ORIGINAL WORKING!!!!!!
-		// function update() {
-		// 	if (!isPaused) {
-		// 		updateFlight();
-		// 		updateGrid();
-		// 		land.position.x = cameraTarget.position.x;
-		// 	  land.position.y = cameraTarget.position.z;
-		// 	}
-		// }
-		// END ORIGINAL WORKING!!!!!!!!!
-
-		// GEMINI V1!!!!!
-
-
-
-
-		// function addNewShip() {
-		// 	console.log("INSIDE ADD NEW SHIP!!!!!!")
-		//   // Clone the original ship model (lDrawGroup) to create a new instance
-		//   const newShip = lDrawGroup.clone();
-		//
-		//   // Get the player's current position and direction
-		//   const playerPosition = cameraTarget.position;
-		//   const playerDirection = new THREE.Vector3();
-		//   camera.getWorldDirection(playerDirection);
-		//
-		// 	console.log("CAMERA WORLD DIRECTION!!")
-		// 	console.log(camera.getWorldDirection(playerDirection))
-		//
-		//   // Calculate the forward position where the new ship should be placed
-		//   const distanceInFrontOfPlayer = 600; // Distance in front of the player to place the new ship
-		//   const shipPosition = new THREE.Vector3(
-		//     playerPosition.x + playerDirection.x * distanceInFrontOfPlayer,
-		//     playerPosition.y + playerDirection.y * distanceInFrontOfPlayer,
-		//     playerPosition.z + playerDirection.z * distanceInFrontOfPlayer
-		//   );
-		//
-		// 	console.log("NEW SHIP POSITIONG!!!")
-		// 	console.log(shipPosition)
-		//
-		// 	newShip.position.x = shipPosition.x+ Math.random()*100-50; // Random x-position within 50 units of the player
-		// 	newShip.position.y = shipPosition.y+ 200; // Random y-position within 50 units of the player
-		// 	newShip.position.z = shipPosition.z+500; // 200 units in front of the player
-		//
-		// 	console.log("SHIP POSITION X")
-		// 	console.log(shipPosition.x+ Math.random()*100-50)
-		// 	console.log("SHIP POSITION Y")
-		// 	console.log(shipPosition.y+ 200)
-		// 	console.log("SHIP POSITION z")
-		// 	console.log(shipPosition.z+300)
-		//
-		// 	// newShip.position.x = playerShipPosition.x+ Math.random()*100-50; // Random x-position within 50 units of the player
-		// 	// newShip.position.y = playerShipPosition.y+ Math.random()*100-50; // Random y-position within 50 units of the player
-		// 	// newShip.position.z = playerShipPosition.z-200; // 200 units in front of the player
-		//
-		//   // Set the new ship's position
-		//   newShip.position.copy(shipPosition);
-		//
-		//   // Align the ship to face the same direction as the player
-		//   newShip.quaternion.copy(camera.quaternion);
-		//
-		//   // Set a random velocity for the new ship
-		//   const minVelocity = 1;
-		//   const maxVelocity = 3;
-		//   newShip.velocity = {
-		//     x: (Math.random() * 2 - 1) * maxVelocity, // Random x-velocity between -maxVelocity and maxVelocity
-		//     y: (Math.random() * 2 - 1) * maxVelocity, // Random y-velocity between -maxVelocity and maxVelocity
-		//     z: minVelocity + Math.random() * (maxVelocity - minVelocity) // Random positive z-velocity between minVelocity and maxVelocity
-		//   };
-		//
-		//   // Add the new ship to the scene and ships array
-		//   scene.add(newShip);
-		//   ships.push(newShip);
-		//
-		//   // Manage the number of ships in the scene
-		//   if (ships.length > maxShipsInScene) {
-		//     const oldestShip = ships.shift(); // Remove the first (oldest) ship from the array
-		//     scene.remove(oldestShip); // Remove the oldest ship from the scene
-		//   }
-		// }
-
-
-// WORKING!!!!!-----------
-
 			function updateShipFlight(ship, delta) {
 				ship.position.x += ship.velocity.x * delta;
 				ship.position.y += ship.velocity.y * delta;
 				ship.position.z += 1;
 			}
 
-
-
-
 			function addNewShip() {
 			  // Clone the original ship model (lDrawGroup) to create a new instance
-			  const newShip = lDrawGroup.clone();
+				var allShips = [obj, obj1, obj2, obj3]
+
+				const randomObject = Math.floor(Math.random() * allShips.length);
+
+			  const newShip = allShips[randomObject].clone();
+
+
 				// const playerDirection = new THREE.Vector3();
 			  const playerShipPosition = cameraTarget.position;
 
